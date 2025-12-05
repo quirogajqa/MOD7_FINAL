@@ -39,7 +39,7 @@ class ProductsRepository @Inject constructor(
                     ProductDataSource(
                         productos = cachedProduct,
                         totalResults = cachedProduct.size,
-                        isFromCache = false
+                        isFromCache = true
                     )
                 )
             } else {

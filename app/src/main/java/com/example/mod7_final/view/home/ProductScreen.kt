@@ -74,6 +74,13 @@ fun ProductScreen (
                     ) {
                         Column {
                             Text("Lista de productos")
+                            if (uiState.isFromCache) {
+                                Text(
+                                    text = stringResource(R.string.home_offline_mode),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Amber400
+                                )
+                            }
                         }
                     }
                 },
