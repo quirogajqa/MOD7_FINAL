@@ -85,7 +85,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(8.dp))
                     Text(
-                        text = "cantidad",
+                        text = producto.cantidad.toString(),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

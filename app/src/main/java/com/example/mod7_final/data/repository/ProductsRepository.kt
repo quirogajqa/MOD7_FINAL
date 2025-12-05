@@ -12,29 +12,27 @@ import javax.inject.Singleton
 class ProductsRepository @Inject constructor(
     private val api: ProductsApi,
     private val productDao: ProductDao
-){
-    suspend fun getProducts (): Result<ProductDataSource> {
+) {
+    suspend fun getProducts(): Result<ProductDataSource> {
         return try {
-            val response = api.getProducts(
-
-            )
-            val responseConverted = response.map { it ->
-                it.toProductoEntity()
-            }
-            productDao.deleteAllProducts()
-            productDao.insertProducts(responseConverted)
-
-            Result.success(
-                ProductDataSource (
-                    productos = response,
-                    totalResults = response.size,
-                    isFromCache = false
-                )
-            )
-        } catch (e: Exception) {
             val cachedProduct = productDao.getAllProducts().map { it.toProductResponse() }
 
-            if (cachedProduct.isNotEmpty()) {
+            if (cachedProduct.isEmpty()) {
+                val response = api.getProducts( )
+                val responseConverted = response.map { it ->
+                    it.toProductoEntity()
+                }
+                productDao.deleteAllProducts()
+                productDao.insertProducts(responseConverted)
+
+                Result.success(
+                    ProductDataSource(
+                        productos = response,
+                        totalResults = response.size,
+                        isFromCache = false
+                    )
+                )
+            } else {
                 Result.success(
                     ProductDataSource(
                         productos = cachedProduct,
@@ -42,10 +40,10 @@ class ProductsRepository @Inject constructor(
                         isFromCache = true
                     )
                 )
-            } else {
-                // No hay cache, retornar error
-                Result.failure(e)
             }
+        } catch (e: Exception) {
+            // No hay cache, retornar error
+            Result.failure(e)
         }
     }
 

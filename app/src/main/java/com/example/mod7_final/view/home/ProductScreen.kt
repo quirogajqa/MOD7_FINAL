@@ -74,13 +74,6 @@ fun ProductScreen (
                     ) {
                         Column {
                             Text("Lista de productos")
-                            if (uiState.isFromCache) {
-                                Text(
-                                    text = stringResource(R.string.home_offline_mode),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Amber400
-                                )
-                            }
                         }
                     }
                 },
@@ -108,9 +101,7 @@ fun ProductScreen (
             }
         }
     ) { padding ->
-        PullToRefreshBox(
-            isRefreshing = uiState.isRefreshing,
-            onRefresh = { viewModel.refresh() },
+        Column (
             modifier = Modifier
                 .padding(padding)
                 .fillMaxSize()

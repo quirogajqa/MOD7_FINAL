@@ -133,24 +133,9 @@ class ProductViewModel @Inject constructor(
 
     }
 
-    fun onIdChanged(idString: String) {
-        try {
-            val id = if (idString.isEmpty()) 0 else idString.toInt()
-            _uiState.update {
-                _uiState.value.copy(id = id)
-            }
-
-            verifyInput()
-        } catch (e: NumberFormatException) {
-            println("Error de formato: $idString no es un número válido.")
-        }
-
-    }
-
     private fun verifyInput() {
         val enabledAdd = isNombreValid(_uiState.value.nombre)
                 && isPrecioValid(_uiState.value.precio)
-                && isIdValid(_uiState.value.id)
                 && isCantidadValid(_uiState.value.cantidad)
         _uiState.update {
             it.copy(isButtonAddEnabled = enabledAdd)
@@ -178,7 +163,7 @@ class ProductViewModel @Inject constructor(
 
     fun onProductoAdded() {
         val newArticuloComparado = ProductEntity(
-            id = _uiState.value.id,
+            id = createId(),
             nombre = _uiState.value.nombre,
             cantidad = _uiState.value.cantidad,
             precio = _uiState.value.precio
@@ -210,9 +195,12 @@ class ProductViewModel @Inject constructor(
             currentList - Producto
         }
     }
-}
 
-private fun isIdValid(id: Int): Boolean = id >= 0
+    private fun createId(): Int{
+        val maxId = _productsList.value.maxOf { it.id }
+        return maxId + 1
+    }
+}
 private fun isNombreValid(nombre: String): Boolean = nombre.length >= 2
 
 private fun isCantidadValid(cantidad: Int): Boolean = cantidad >= 0

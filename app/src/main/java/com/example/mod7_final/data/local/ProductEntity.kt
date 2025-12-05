@@ -52,7 +52,7 @@ fun ProductResponse.toProductoEntity(): ProductEntity{
     return ProductEntity(
         id = id,
         nombre = title,
-        cantidad = 1,
+        cantidad = (1..10).random(),
         precio = price
     )
 }

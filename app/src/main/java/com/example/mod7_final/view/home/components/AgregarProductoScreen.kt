@@ -50,35 +50,6 @@ fun AgregarProductoScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         TextField(
-            value = if (uiState.id == 0) "" else uiState.id.toString(),
-            onValueChange = { viewModel.onIdChanged(it) },
-            shape = AppShape.medium,
-            singleLine = true,
-            modifier = Modifier.fillMaxWidth(),
-            keyboardOptions = KeyboardOptions(
-                keyboardType = KeyboardType.Number
-            ),
-            label = {
-                Text(
-                    stringResource(R.string.id),
-                    style = MaterialTheme.typography.labelLarge
-                )
-            },
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
-                unfocusedContainerColor = MaterialTheme.colorScheme.surface,
-                disabledContainerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.5f),
-                focusedTextColor = MaterialTheme.colorScheme.onPrimary,
-                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                focusedLabelColor = MaterialTheme.colorScheme.tertiary,
-                unfocusedLabelColor = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
-                cursorColor = MaterialTheme.colorScheme.tertiary,
-            )
-        )
-
-        Spacer(Modifier.height(8.dp))
-
-        TextField(
             value = uiState.nombre,
             onValueChange = { viewModel.onNombreChanged(it) },
             shape = AppShape.medium,
