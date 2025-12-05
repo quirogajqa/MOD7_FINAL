@@ -1,6 +1,5 @@
 package com.example.mod7_final.view.home.components
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -22,14 +21,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.example.mod7_final.data.models.Product
+import com.example.mod7_final.data.models.ProductResponse
 import com.example.mod7_final.ui.theme.AppShape
 import com.example.mod7_final.ui.theme.Slate200
 
 
 @Composable
 fun ProductCard(
-    product: Product
+    productResponse: ProductResponse
 ) {
     Card(
         modifier = Modifier
@@ -52,7 +51,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(51.dp))
                     Text(
-                        text = product.id.toString(),
+                        text = productResponse.id.toString(),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
@@ -65,7 +64,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(14.dp))
                     Text(
-                        text = product.title,
+                        text = productResponse.title,
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis
@@ -93,7 +92,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(25.dp))
                     Text(
-                        text = product.price.toString(),
+                        text = productResponse.price.toString(),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }

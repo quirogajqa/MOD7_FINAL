@@ -1,10 +1,6 @@
 package com.example.mod7_final.data.models
 
 data class  ProductResponse (
-    val productos: List<Product>
-)
-
-data class  Product (
     val id: Int,
     val title: String,
     val price: Double,

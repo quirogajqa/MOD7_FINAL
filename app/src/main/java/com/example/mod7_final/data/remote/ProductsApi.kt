@@ -1,9 +1,9 @@
 package com.example.mod7_final.data.remote
 
-import com.example.mod7_final.data.models.Product
+import com.example.mod7_final.data.models.ProductResponse
 import retrofit2.http.GET
 
 interface ProductsApi {
     @GET("products")
-    suspend fun getProducts( ): List<Product>
+    suspend fun getProducts( ): List<ProductResponse>
 }

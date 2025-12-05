@@ -35,17 +35,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mod7_final.R
-import com.example.mod7_final.data.remote.RetrofitClient
-import com.example.mod7_final.data.repository.ProductsRepository
 import com.example.mod7_final.ui.theme.Amber400
 import com.example.mod7_final.ui.theme.Indigo950
 import com.example.mod7_final.ui.theme.Pink40
@@ -58,15 +55,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductScreen (
-    viewModel: ProductViewModel = run {
-        val productRepository = remember {
-            ProductsRepository(
-                api = RetrofitClient.productsApi
-            )
-        }
-
-        viewModel { ProductViewModel(productRepository) }
-    }
+    viewModel: ProductViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
@@ -171,10 +160,10 @@ fun ProductScreen (
                                 .spacedBy(12.dp)
                         ) {
                             items(
-                                items = uiState.products
+                                items = uiState.productResponses
                             ) { product ->
                                 ProductCard(
-                                    product = product
+                                    productResponse = product
                                 )
                             }
                         }

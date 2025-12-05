@@ -2,20 +2,30 @@ package com.example.mod7_final.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.mod7_final.data.models.Product
+import com.example.mod7_final.data.local.ProductDao
+import com.example.mod7_final.data.local.toProductoEntity
+import com.example.mod7_final.data.models.ProductResponse
+import com.example.mod7_final.data.models.Producto
 import com.example.mod7_final.data.repository.ProductsRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ProductViewModel(
-    private val repository: ProductsRepository
+@HiltViewModel
+class ProductViewModel @Inject constructor(
+    private val repository: ProductsRepository,
+    private val productDao: ProductDao
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(ProductoUiState())
 
     val uiState: StateFlow<ProductoUiState> = _uiState
+
+    private val _comprasList = MutableStateFlow<List<Producto>>(emptyList())
+    val comprasList: StateFlow<List<Producto>> = _comprasList
 
     init {
         loadProducts()
@@ -29,7 +39,7 @@ class ProductViewModel(
                 onSuccess = { dataSource ->
                     _uiState.update {
                         it.copy(
-                            products = dataSource.productos,
+                            productResponses = dataSource.productos,
                             isLoading = false,
                             errorMessage = null
                         )
@@ -66,7 +76,7 @@ class ProductViewModel(
                 onSuccess = { dataSource ->
                     _uiState.update {
                         it.copy(
-                            products = dataSource.productos,
+                            productResponses = dataSource.productos,
                             isRefreshing = false,
                             errorMessage = null,
                         )
@@ -163,34 +173,23 @@ class ProductViewModel(
     }
 
     fun onProductoAdded() {
-//        val newArticuloComparado = ArticuloComparado(
-//            nombre = _uiState.value.nombre,
-//            marca = _uiState.value.marca,
-//            cantidad = _uiState.value.cantidad,
-//            precio = _uiState.value.precio,
-//            unidad = _uiState.value.unidad,
-//            descuento = _uiState.value.descuento,
-//            pack = _uiState.value.pack,
-//
-//        )
-//        _uiState.update {currentList ->
-//            currentList + newArticuloComparado
-//        }
-//
-//        _uiState.update {
-//            _uiState.value.copy( isProductoEnabled = false )
-//        }
-//        val nombreAnterior = _uiState.value.nombre
-//        val unidadAnterior = _uiState.value.unidad
-//        _uiState.update { ProductoUiState(nombre = nombreAnterior, unidad = unidadAnterior) }
-//
-//        viewModelScope.launch {
-//            comparedArticleDao.insertArticle(newArticuloComparado)
-//        }
-//
-//        VerificarMejorPrecio()
-//
-//        sortProductosByBestPrice()
+        val newArticuloComparado = Producto(
+            id = _uiState.value.id,
+            nombre = _uiState.value.nombre,
+            cantidad = _uiState.value.cantidad,
+            precio = _uiState.value.precio
+            )
+        _comprasList.update {currentList ->
+            currentList + newArticuloComparado
+        }
+
+        _uiState.update {
+            _uiState.value.copy( isButtonAddEnabled = false )
+        }
+
+        viewModelScope.launch {
+            productDao.insertProduct(newArticuloComparado.toProductoEntity())
+        }
     }
 
     fun clearShowDialog(){
@@ -206,7 +205,7 @@ private fun isCantidadValid(cantidad: Int): Boolean = cantidad >= 0
 private fun isPrecioValid(precio: Double): Boolean = precio > 0.0
 
 data class ProductoUiState(
-    val products: List<Product> = emptyList(),
+    val productResponses: List<ProductResponse> = emptyList(),
     val id: Int = 0,
     val nombre: String = "",
     val cantidad: Int = 0,
