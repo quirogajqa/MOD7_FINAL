@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">MOD7_FINAL</string>
+    <string name="home_error_loading">Error al cargar productos</string>
+    <string name="home_retry">Reintentar</string>
+    <string name="nombre">Nombre</string>
+    <string name="cantidad">Cantidad</string>
+    <string name="precio">Precio</string>
+    <string name="id">ID</string>
+</resources>
