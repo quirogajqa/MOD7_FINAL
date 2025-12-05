@@ -3,6 +3,7 @@ package com.example.mod7_final.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.mod7_final.data.local.ProductDao
+import com.example.mod7_final.data.local.ProductEntity
 import com.example.mod7_final.data.local.toProductoEntity
 import com.example.mod7_final.data.models.ProductResponse
 import com.example.mod7_final.data.models.Producto
@@ -24,8 +25,8 @@ class ProductViewModel @Inject constructor(
 
     val uiState: StateFlow<ProductoUiState> = _uiState
 
-    private val _comprasList = MutableStateFlow<List<Producto>>(emptyList())
-    val comprasList: StateFlow<List<Producto>> = _comprasList
+    private val _productsList = MutableStateFlow<List<ProductEntity>>(emptyList())
+    val productsList: StateFlow<List<ProductEntity>> = _productsList
 
     init {
         loadProducts()
@@ -37,11 +38,13 @@ class ProductViewModel @Inject constructor(
 
             repository.getProducts().fold(
                 onSuccess = { dataSource ->
+
+                    _productsList.value = dataSource.productos.map { it.toProductoEntity() }
                     _uiState.update {
                         it.copy(
-                            productResponses = dataSource.productos,
                             isLoading = false,
-                            errorMessage = null
+                            errorMessage = null,
+                            isFromCache = dataSource.isFromCache,
                         )
                     }
                 },
@@ -68,17 +71,18 @@ class ProductViewModel @Inject constructor(
         loadProducts()
     }
 
-    fun refresh(page: Int = 1) {
+    fun refresh() {
         viewModelScope.launch {
             _uiState.update { it.copy(isRefreshing = true) }
 
             repository.refreshProducs().fold(
                 onSuccess = { dataSource ->
+                    _productsList.value = dataSource.productos.map { it.toProductoEntity() }
                     _uiState.update {
                         it.copy(
-                            productResponses = dataSource.productos,
                             isRefreshing = false,
                             errorMessage = null,
+                            isFromCache = dataSource.isFromCache,
                         )
                     }
                 },
@@ -173,13 +177,13 @@ class ProductViewModel @Inject constructor(
     }
 
     fun onProductoAdded() {
-        val newArticuloComparado = Producto(
+        val newArticuloComparado = ProductEntity(
             id = _uiState.value.id,
             nombre = _uiState.value.nombre,
             cantidad = _uiState.value.cantidad,
             precio = _uiState.value.precio
             )
-        _comprasList.update {currentList ->
+        _productsList.update { currentList ->
             currentList + newArticuloComparado
         }
 
@@ -187,8 +191,10 @@ class ProductViewModel @Inject constructor(
             _uiState.value.copy( isButtonAddEnabled = false )
         }
 
+        _uiState.update { ProductoUiState() }
+
         viewModelScope.launch {
-            productDao.insertProduct(newArticuloComparado.toProductoEntity())
+            productDao.insertProduct(newArticuloComparado)
         }
     }
 
@@ -196,6 +202,14 @@ class ProductViewModel @Inject constructor(
         _uiState.update { ProductoUiState( showDialog = true ) }
     }
 
+    fun onProductoDeleted(Producto: ProductEntity) {
+        viewModelScope.launch {
+            productDao.deleteProductById(Producto.id)
+        }
+        _productsList.update { currentList ->
+            currentList - Producto
+        }
+    }
 }
 
 private fun isIdValid(id: Int): Boolean = id >= 0
@@ -205,7 +219,6 @@ private fun isCantidadValid(cantidad: Int): Boolean = cantidad >= 0
 private fun isPrecioValid(precio: Double): Boolean = precio > 0.0
 
 data class ProductoUiState(
-    val productResponses: List<ProductResponse> = emptyList(),
     val id: Int = 0,
     val nombre: String = "",
     val cantidad: Int = 0,
@@ -216,4 +229,5 @@ data class ProductoUiState(
     val showDialog: Boolean = false,
     val isEnabledClear: Boolean = false,
     val isButtonAddEnabled: Boolean = false,
+    val isFromCache: Boolean = false,
 )

@@ -58,6 +58,7 @@ fun ProductScreen (
     viewModel: ProductViewModel = hiltViewModel()
 ){
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val productList by viewModel.productsList.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -160,10 +161,10 @@ fun ProductScreen (
                                 .spacedBy(12.dp)
                         ) {
                             items(
-                                items = uiState.productResponses
+                                items = productList
                             ) { product ->
                                 ProductCard(
-                                    productResponse = product
+                                    producto = product
                                 )
                             }
                         }

@@ -21,14 +21,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mod7_final.data.local.ProductEntity
 import com.example.mod7_final.data.models.ProductResponse
+import com.example.mod7_final.data.models.Producto
 import com.example.mod7_final.ui.theme.AppShape
 import com.example.mod7_final.ui.theme.Slate200
+import com.example.mod7_final.viewmodel.ProductViewModel
 
 
 @Composable
 fun ProductCard(
-    productResponse: ProductResponse
+    producto: ProductEntity,
+    viewModel: ProductViewModel = hiltViewModel()
 ) {
     Card(
         modifier = Modifier
@@ -40,9 +46,9 @@ fun ProductCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(Modifier.padding(vertical = 15.dp, horizontal = 30.dp)) {
-            Column (
+            Column(
                 Modifier.weight(7f)
-            ){
+            ) {
                 Row {
                     Text(
                         text = "ID: ",
@@ -51,7 +57,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(51.dp))
                     Text(
-                        text = productResponse.id.toString(),
+                        text = producto.id.toString(),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
@@ -64,7 +70,7 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(14.dp))
                     Text(
-                        text = productResponse.title,
+                        text = producto.nombre,
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 4,
                         overflow = TextOverflow.Ellipsis
@@ -92,14 +98,14 @@ fun ProductCard(
                     )
                     Spacer(Modifier.width(25.dp))
                     Text(
-                        text = productResponse.price.toString(),
+                        text = producto.precio.toString(),
                         style = MaterialTheme.typography.titleMedium,
                     )
                 }
             }
             Spacer(Modifier.width(12.dp))
             IconButton(
-                onClick = { },
+                onClick = { viewModel.onProductoDeleted(producto) },
                 Modifier
                     .align(Alignment.Top)
                     .weight(1f)
