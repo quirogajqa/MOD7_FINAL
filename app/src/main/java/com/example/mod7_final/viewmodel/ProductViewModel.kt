@@ -203,7 +203,7 @@ class ProductViewModel @Inject constructor(
 }
 private fun isNombreValid(nombre: String): Boolean = nombre.length >= 2
 
-private fun isCantidadValid(cantidad: Int): Boolean = cantidad >= 0
+private fun isCantidadValid(cantidad: Int): Boolean = cantidad > 0
 private fun isPrecioValid(precio: Double): Boolean = precio > 0.0
 
 data class ProductoUiState(
